@@ -1,0 +1,26 @@
+sudo: required
+language: generic
+services:
+  - docker
+
+before_install:
+  - docker build -t lenestopage/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true USERNAME/react-test npm test
+
+after_success:
+  - docker build -t lenestopage/multi-client ./client
+  - docker build -t lenestopage/multi-nginx ./nginx
+  - docker build -t lenestopage/multi-server ./server
+  - docker build -t lenestopage/multi-worker ./worker
+  # Login to the Docker Hub
+  
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  
+  # Push Production Images to Docker Hub
+  
+  - docker push lenestopage/multi-client
+  - docker push lenestopage/multi-nginx
+  - docker push lenestopage/multi-server
+  - docker push lenestopage/multi-worker
