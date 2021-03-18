@@ -24,3 +24,16 @@ after_success:
   - docker push lenestopage/multi-nginx
   - docker push lenestopage/multi-server
   - docker push lenestopage/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: us-east-2
+  app: multi-docker
+  env: Multidockers-env
+  bucket_name: elasticbeanstalk-us-east-2-581451982654
+  bucket_path: docker-multi
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
+  
